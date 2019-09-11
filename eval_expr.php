@@ -2,15 +2,17 @@
 
 Class Eval_Expr {
 
-	public function __construct(){
+	public function __construct($expr){
+		$this->expr = $expr;
 		$this->final_expr = '';
+		$this->stored_expr = null;
 		$this->loop = true;
 	}
 
-	public function eval($expr){
-		if(!is_string($expr)) return "parameter must be a string\n";
+	public function eval(){
+		if(!is_string($this->expr)) return "parameter must be a string\n";
 
-		$res = $this->loop($expr, false);
+		$res = $this->loop($this->expr, false);
 		echo "res: $res\n\nfinal expr: $this->final_expr\n\n";
 	}
 
@@ -35,6 +37,14 @@ Class Eval_Expr {
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
 					$val = $val * $output[0][$i+1];
 					break;
+				case "/":
+					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
+					$val = $val / $output[0][$i+1];
+					break;
+				case "%":
+					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
+					$val = $val % $output[0][$i+1];
+					break;
 				default:
 					break;
 			}
@@ -43,7 +53,7 @@ Class Eval_Expr {
 	}
 
 	public function loop($expr, $parentheses=false){
-		$current_expr = '';
+		var_dump("LOOOOOOOOOOOP");
 		$parentheses_expr = '';
 
 		for($i=0; $i<strlen($expr); $i++){
@@ -51,20 +61,33 @@ Class Eval_Expr {
 				if(preg_match_all("/(\(|\)\d+|-|\+|\/|\*|\%)/", $expr)){
 
 					if($expr[$i]==='('){
+						$this->stored_expr = $i;
 						$this->loop(substr($expr, $i+1), true);
 					}
 					else if($expr[$i]===')' && $parentheses){
+						$this->stored_expr++;
+						$this->loop = false;
 						$parentheses = false;
 						$this->final_expr .= $this->calcul($parentheses_expr);
-						$this->loop = false;
-						break;
-						//if(strlen($this->expr) > strlen($expr)) $this->final_expr .= substr($expr, -1, $i+1); LOOP AT STORED END OF PARENTHESES
+						var_dump(strlen($this->expr), $this->stored_expr);
+						if(strlen($this->expr) > $this->stored_expr){
+							$this->loop = true;
+							echo "HOLLY SHIT\n\n";
+							var_dump(substr($this->expr, $this->stored_expr+1));
+							$this->loop(substr($this->expr, $this->stored_expr+1));
+							$this->loop = false;
+							$this->stored_expr = null;
+						}
+						else break;
 					}
 					else {
 						if(!$parentheses){
-							 $this->final_expr .= $expr[$i];
-						 }
-						else $parentheses_expr .= $expr[$i];
+							$this->final_expr .= $expr[$i];
+						}
+						else {
+							$this->stored_expr++;
+							$parentheses_expr .= $expr[$i];
+						}
 					}
 
 				}
@@ -76,5 +99,5 @@ Class Eval_Expr {
 
 }
 
-$expr = new Eval_Expr();
-$expr->eval("5+(5+5)");
+$expr = new Eval_Expr("5+(10+5)/2");
+$expr->eval();
