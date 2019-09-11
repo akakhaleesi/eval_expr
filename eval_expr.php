@@ -12,7 +12,7 @@ Class Eval_Expr {
 	public function eval(){
 		if(!is_string($this->expr)) return "parameter must be a string\n";
 
-		$res = $this->loop($this->expr, false);
+		return $this->loop($this->expr, false);
 
 		return "res: $res\n\nfinal expr: $this->final_expr\n\n";
 	}
@@ -41,7 +41,7 @@ Class Eval_Expr {
 					$last_n = $last_n * $expr[$i+1];
 					break;
 
-				default: echo "default\n\n";
+				default: echo "default: $expr[$i]\n\n";
 			}
 		}
 		return $last_n;
@@ -56,7 +56,7 @@ Class Eval_Expr {
 			if(in_array($expr[$i], $this->operators) || in_array($expr[$i], $this->numbers)){
 echo "$expr[$i]\n\n";
 				if($expr[$i]==='('){echo "[1]\n\n";
-					$this->final_expr .= substr($expr, 0, $i-1);
+					//if($i !== 0) $this->final_expr .= substr($expr, 0, $i);
 					$this->loop(substr($expr, $i+1), true);
 				}
 
@@ -64,8 +64,9 @@ echo "$expr[$i]\n\n";
 					$parentheses = false;
 					echo "parentheses: $parentheses_expr\n\n";
 					$this->final_expr .= $this->calcul($parentheses_expr);
-					if(strlen($expr) > $i+1) $this->final_expr .= substr($expr, -1, $i+1);
-					$this->loop($this->final_expr, false);
+					echo "final exprrrrrrrrrrrrrr: $this->final_expr\n\n";
+					//if(strlen($this->expr) > strlen($expr)) $this->final_expr .= substr($expr, -1, $i+1); LOOP AT STORED END OF PARENTHESES
+					//$this->loop($this->final_expr, false);
 				}
 
 				else {echo "[3]\n\n";
@@ -76,6 +77,7 @@ echo "$expr[$i]\n\n";
 			}
 			else return "function loop: syntax error\n\n";
 		}
+		echo "MOTHAFUCKED SUPPPOSED END OF LOOP\n\n";
 		return $this->calcul($this->final_expr);
 	}
 
