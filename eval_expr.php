@@ -62,40 +62,42 @@ Class Eval_Expr {
 		$res = '';
 		preg_match_all("/(\d+|-|\+|\/|\*|\%)/", $expr, $output);
 		if(!preg_match("/(\d+)/", $output[0][0])) return;
+		//var_dump($output[0]);
+		//var_dump(array_search('*', $output[0]));
 		if($index = array_search('*', $output[0])){
-			var_dump($output[0], $index);
-			$res .= $this->switch([0 => $output[$index-1], 1 => $output[$index], 2 => $output[$index+1]]);
-			array_splice($output[0], $index-1, 3);
+			//var_dump($output[0], $index, 'TOO');
+			$toto = array_splice($output[0], $index-1, 3);var_dump($toto);
+			$res .= $this->switch($toto);
 		}
 		$res .= $this->switch($output[0]);
 		return $res;
 	}
 
-	public function switch($array){
+	public function switch($array){//var_dump($array);
 		$val = $array[0];
 		$n = '';
 
-		for($i=1; $i<count($array[0]);$i++){
-			switch($array[0][$i]){
+		for($i=1; $i<count($array);$i++){
+			switch($array[$i]){
 				case "-":
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
-					$val = $val - $array[0][$i+1];
+					$val = $val - $array[$i+1];
 					break;
 				case "+":
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
-					$val = $val + $array[0][$i+1];
+					$val = $val + $array[$i+1];
 					break;
 				case "*":
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
-					$val = $val * $array[0][$i+1];
+					$val = $val * $array[$i+1];
 					break;
 				case "/":
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
-					$val = $val / $array[0][$i+1];
+					$val = $val / $array[$i+1];
 					break;
 				case "%":
 					//if(strlen($expr) === $i) return "function calcul 3: syntax error\n\n";
-					$val = $val % $array[0][$i+1];
+					$val = $val % $array[$i+1];
 					break;
 				default:
 					break;
@@ -106,5 +108,5 @@ Class Eval_Expr {
 
 }
 
-$expr = new Eval_Expr("(3+2)*5");
+$expr = new Eval_Expr("(3+2)*5+6");
 $expr->eval();
