@@ -96,5 +96,5 @@ Class Eval_Expr {
 		return $val;
 	}
 }
-$expr = new Eval_Expr("3+2*(5+6)");
+$expr = new Eval_Expr("4+2*(5+6)");
 $expr->eval();
